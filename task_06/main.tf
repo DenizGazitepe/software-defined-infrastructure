@@ -39,6 +39,7 @@ resource "hcloud_server" "helloServer" {
   name         = "hello"
   image        = "debian-12"
   server_type  = "cx22"
+  datacenter   = "nbg1-dc3"
   firewall_ids = [hcloud_firewall.sshFw.id]
   ssh_keys     = [hcloud_ssh_key.loginDeniz.id, hcloud_ssh_key.loginNico.id, hcloud_ssh_key.loginGoik.id]
 }
