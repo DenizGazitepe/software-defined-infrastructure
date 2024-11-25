@@ -34,6 +34,13 @@ resource "hcloud_ssh_key" "loginNico" {
   public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9FnrukU1in+njcoOtPe7Z1yYLqlGD6tBebrq/GFVRQ nico@Nasbert"
 }
 
+resource "local_file" "user_data" {
+  content = templatefile("tpl/userData.yml", {
+  loginUser = "devops"
+  })
+  filename = "gen/userData.yml"
+}
+
 # Create a server
 resource "hcloud_server" "helloServer" {
   name         = "hello"
@@ -45,3 +52,4 @@ resource "hcloud_server" "helloServer" {
   // New stuff here, Fig. 1001, Yaml file contains commands that should be run when the server is created
   user_data = file("userData.yml")
 }
+
