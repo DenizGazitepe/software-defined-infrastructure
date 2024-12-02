@@ -1,0 +1,28 @@
+#cloud-config
+write_files:
+ - content: |
+    AllowUsers devops
+    PasswordAuthentication no
+    PermitRootLogin no
+    ChallengeResponseAuthentication no
+    UsePAM yes
+   path: /etc/ssh/sshd_config.d/restrict-ssh.conf
+   permissions: '0644'
+users:
+ - name: devops
+   groups: sudo
+   shell: /bin/bash
+   sudo: ALL=(ALL) NOPASSWD:ALL
+   ssh_authorized_keys:
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHo157bpi8OVPIv9WPPfKlcWmCu+68E3Ii5nfjtarAU dg102@hdm-stuttgart.de
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9FnrukU1in+njcoOtPe7Z1yYLqlGD6tBebrq/GFVRQ nico@Nasbert
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKY24AeEibQGSMPtstaN4REByLCM3kzjM//apEZ9WyUB goik@hdm-stuttgart.de
+packages:
+  - nginx
+runcmd:
+  - systemctl enable nginx
+  - rm /var/www/html/*
+  - >
+    echo "I'm Nginx @ $(dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com) 
+    created $(date -u)" >> /var/www/html/index.html
+  - systemctl restart ssh

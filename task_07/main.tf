@@ -21,7 +21,7 @@ resource "hcloud_firewall" "sshFw" {
 # Add the ssh keys
 resource "hcloud_ssh_key" "loginDeniz" {
   name       = "deniz@LegionSlim7-Deniz"
-  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICF0ll5wZPXwKvIqo9Dvp0bLJVu54pvHhji6i73pgiOE"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHo157bpi8OVPIv9WPPfKlcWmCu+68E3Ii5nfjtarAU dg102@hdm-stuttgart.de"
 }
 
 resource "hcloud_ssh_key" "loginGoik" {
@@ -36,7 +36,10 @@ resource "hcloud_ssh_key" "loginNico" {
 
 resource "local_file" "user_data" {
   content = templatefile("tpl/userData.yml", {
-  loginUser = "devops"
+    loginUser       = "devops"
+    public_key_deniz = hcloud_ssh_key.loginDeniz.public_key 
+    public_key_nico = hcloud_ssh_key.loginNico.public_key
+    public_key_goik = hcloud_ssh_key.loginGoik.public_key
   })
   filename = "gen/userData.yml"
 }
@@ -49,7 +52,6 @@ resource "hcloud_server" "helloServer" {
   datacenter   = "nbg1-dc3"
   firewall_ids = [hcloud_firewall.sshFw.id]
   ssh_keys     = [hcloud_ssh_key.loginDeniz.id, hcloud_ssh_key.loginNico.id, hcloud_ssh_key.loginGoik.id]
-  // New stuff here, Fig. 1001, Yaml file contains commands that should be run when the server is created
-  user_data = file("userData.yml")
+  user_data    = local_file.user_data.content
 }
 
