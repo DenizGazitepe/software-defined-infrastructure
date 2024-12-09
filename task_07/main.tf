@@ -37,7 +37,7 @@ resource "hcloud_ssh_key" "loginNico" {
 resource "local_file" "user_data" {
   content = templatefile("tpl/userData.yml", {
     loginUser       = "devops"
-    public_key_deniz = hcloud_ssh_key.loginDeniz.public_key 
+    public_key_deniz = hcloud_ssh_key.loginDeniz.public_key
     public_key_nico = hcloud_ssh_key.loginNico.public_key
     public_key_goik = hcloud_ssh_key.loginGoik.public_key
   })
@@ -53,5 +53,13 @@ resource "hcloud_server" "helloServer" {
   firewall_ids = [hcloud_firewall.sshFw.id]
   ssh_keys     = [hcloud_ssh_key.loginDeniz.id, hcloud_ssh_key.loginNico.id, hcloud_ssh_key.loginGoik.id]
   user_data    = local_file.user_data.content
+}
+
+resource "hcloud_volume" "volume01" {
+  name = "volume1"
+  size = 10
+  server_id = hcloud_server.helloServer.id
+  automount = true
+  format = "xfs"
 }
 
