@@ -36,7 +36,7 @@ resource "hcloud_ssh_key" "loginNico" {
 
 resource "hcloud_volume" "volume01" {
   name = "volume1"
-  location = "nbg1-dc3"
+  location = "nbg1"
   size = 10
   automount = false
   format = "xfs"
@@ -58,7 +58,7 @@ resource "hcloud_server" "helloServer" {
   name         = "hello"
   image        = "debian-12"
   server_type  = "cx22"
-  datacenter   = "nbg1-dc3"
+  location = "nbg1"
   firewall_ids = [hcloud_firewall.sshFw.id]
   ssh_keys     = [hcloud_ssh_key.loginDeniz.id, hcloud_ssh_key.loginNico.id, hcloud_ssh_key.loginGoik.id]
   user_data    = local_file.user_data.content
