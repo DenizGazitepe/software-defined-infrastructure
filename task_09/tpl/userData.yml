@@ -26,7 +26,4 @@ runcmd:
     echo "I'm Nginx @ $(dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com) 
     created $(date -u)" >> /var/www/html/index.html
   - systemctl restart ssh
-  - echo
-  - `/bin/ls /dev/disk/by-id/*${volume_id}`
-  - /vol01 xfs discard,nofail,defaults 0 0 >> /etc/fstab
-  - systemctl daemon-reload
+

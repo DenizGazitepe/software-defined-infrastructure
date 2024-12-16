@@ -34,18 +34,9 @@ resource "hcloud_ssh_key" "loginNico" {
   public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9FnrukU1in+njcoOtPe7Z1yYLqlGD6tBebrq/GFVRQ nico@Nasbert"
 }
 
-resource "hcloud_volume" "volume01" {
-  name = "volume1"
-  location = "nbg1-dc3"
-  size = 10
-  automount = false
-  format = "xfs"
-}
-
 resource "local_file" "user_data" {
   content = templatefile("tpl/userData.yml", {
     loginUser       = "devops"
-    volume_id=hcloud_volume.volume01.id
     public_key_deniz = hcloud_ssh_key.loginDeniz.public_key
     public_key_nico = hcloud_ssh_key.loginNico.public_key
     public_key_goik = hcloud_ssh_key.loginGoik.public_key
@@ -64,7 +55,10 @@ resource "hcloud_server" "helloServer" {
   user_data    = local_file.user_data.content
 }
 
-resource "hcloud_volume_attachment" "main" {
-  volume_id=hcloud_volume.volume01.id
-  server_id=hcloud_server.helloServer.id
+resource "hcloud_volume" "volume01" {
+  name      = "volume1"
+  size      = 10
+  server_id = hcloud_server.helloServer.id
+  automount = true
+  format    = "xfs"
 }
