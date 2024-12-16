@@ -1,0 +1,70 @@
+# Define Hetzner cloud provider
+terraform {
+  required_providers {
+    hcloud = {
+      source = "hetznercloud/hcloud"
+    }
+  }
+  required_version = ">= 1.0"
+}
+
+# Setup the firewall
+resource "hcloud_firewall" "sshFw" {
+  name = "ssh-firewall"
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "22"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+}
+# Add the ssh keys
+resource "hcloud_ssh_key" "loginDeniz" {
+  name       = "deniz@LegionSlim7-Deniz"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHo157bpi8OVPIv9WPPfKlcWmCu+68E3Ii5nfjtarAU dg102@hdm-stuttgart.de"
+}
+
+resource "hcloud_ssh_key" "loginGoik" {
+  name       = "goik@hdm-stuttgart.de"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKY24AeEibQGSMPtstaN4REByLCM3kzjM//apEZ9WyUB goik@hdm-stuttgart.de"
+}
+
+resource "hcloud_ssh_key" "loginNico" {
+  name       = "nico@Nasbert"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9FnrukU1in+njcoOtPe7Z1yYLqlGD6tBebrq/GFVRQ nico@Nasbert"
+}
+
+resource "hcloud_volume" "volume01" {
+  name = "volume1"
+  location = "nbg1-dc3"
+  size = 10
+  automount = false
+  format = "xfs"
+}
+
+resource "local_file" "user_data" {
+  content = templatefile("tpl/userData.yml", {
+    loginUser       = "devops"
+    volume_id=hcloud_volume.volume01.id
+    public_key_deniz = hcloud_ssh_key.loginDeniz.public_key
+    public_key_nico = hcloud_ssh_key.loginNico.public_key
+    public_key_goik = hcloud_ssh_key.loginGoik.public_key
+  })
+  filename = "gen/userData.yml"
+}
+
+# Create a server
+resource "hcloud_server" "helloServer" {
+  name         = "hello"
+  image        = "debian-12"
+  server_type  = "cx22"
+  datacenter   = "nbg1-dc3"
+  firewall_ids = [hcloud_firewall.sshFw.id]
+  ssh_keys     = [hcloud_ssh_key.loginDeniz.id, hcloud_ssh_key.loginNico.id, hcloud_ssh_key.loginGoik.id]
+  user_data    = local_file.user_data.content
+}
+
+resource "hcloud_volume_attachment" "main" {
+  volume_id=hcloud_volume.volume01.id
+  server_id=hcloud_server.helloServer.id
+}
