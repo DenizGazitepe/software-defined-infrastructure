@@ -31,13 +31,13 @@ resource "tls_private_key" "host" {
 
 # Add the ssh keys
 resource "hcloud_ssh_key" "loginDeniz" {
-  name       = "deniz@LegionSlim7-Deniz"
-  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIHo157bpi8OVPIv9WPPfKlcWmCu+68E3Ii5nfjtarAU dg102@hdm-stuttgart.de"
+  name       = "deniz@legion7"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJzu8APoHJolszZxgVtfMhaZ9PjlV2whqKtzrXjhzs83 deniz@legion7"
 }
 
 resource "hcloud_ssh_key" "loginDenizWSL" {
-  name       = "deniz@LegionSlim7-WSL-Ubuntu"
-  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICF0ll5wZPXwKvIqo9Dvp0bLJVu54pvHhji6i73pgiOE"
+  name       = "deniz@legion7-WSL-Ubuntu"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDymDpFYopWf8bXwOZHDzICugzu4lhQ7dWGLLXg6twzL deniz@legion7"
 }
 
 resource "hcloud_ssh_key" "loginGoik" {
