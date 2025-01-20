@@ -157,3 +157,9 @@ resource "hcloud_volume_attachment" "main" {
   volume_id = hcloud_volume.volume01.id
   server_id = hcloud_server.helloServer.id
 }
+
+
+
+
+
+

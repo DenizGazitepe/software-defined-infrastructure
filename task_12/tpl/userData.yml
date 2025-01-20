@@ -37,3 +37,4 @@ runcmd:
   - /bin/ls /dev/disk/by-id/*${volume_id}
   - /vol01 xfs discard,nofail,defaults 0 0 >> /etc/fstab
   - systemctl daemon-reload
+  - apt install apt-cacher-ng

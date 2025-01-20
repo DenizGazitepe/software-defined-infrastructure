@@ -138,6 +138,18 @@ resource "hcloud_server" "intern2" {
   }
 }
 
+# Create primary IP adress
+resource "hcloud_primary_ip" "primary_ip" {
+  name          = "primary_ip_test"
+  datacenter    = "nbg1-dc3"
+  type          = "ipv4"
+  assignee_type = "server"
+  auto_delete   = true
+  labels = {
+    "hallo" : "welt"
+  }
+}
+
 # Create a server
 resource "hcloud_server" "helloServer" {
   name         = "hello"
@@ -150,6 +162,9 @@ resource "hcloud_server" "helloServer" {
   network {
     network_id = hcloud_network.pNet.id
     ip         = "10.0.1.20"
+  }
+  public_net {
+    ipv4 = hcloud_primary_ip.primary_ip.id
   }
 }
 
