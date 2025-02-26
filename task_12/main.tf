@@ -138,7 +138,7 @@ resource "hcloud_server" "intern2" {
   }
 }
 
-# Create primary IP adress
+# Create primary IP address
 resource "hcloud_primary_ip" "primary_ip" {
   name          = "primary_ip_test"
   datacenter    = "nbg1-dc3"
