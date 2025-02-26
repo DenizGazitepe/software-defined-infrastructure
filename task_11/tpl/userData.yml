@@ -1,0 +1,39 @@
+#cloud-config
+write_files:
+  - content: |
+      AllowUsers ${loginUser}
+      PasswordAuthentication no
+      PermitRootLogin no
+      ChallengeResponseAuthentication no
+      UsePAM yes
+    path: /etc/ssh/sshd_config.d/restrict-ssh.conf
+    permissions: "0644"
+
+ssh_keys:
+  ed25519_private: |
+    ${tls_private_key}
+  ed25519_public: ${tls_public_key}
+
+users:
+  - name: ${loginUser}
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${public_key_deniz}
+      - ${public_key_denizWSL}
+      - ${public_key_nico}
+      - ${public_key_goik}
+packages:
+  - nginx
+runcmd:
+  - systemctl enable nginx
+  - rm /var/www/html/*
+  - >
+    echo "I'm Nginx @ $(dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com) 
+    created $(date -u)" >> /var/www/html/index.html
+  - systemctl restart ssh
+  - echo
+  - /bin/ls /dev/disk/by-id/*${volume_id}
+  - /vol01 xfs discard,nofail,defaults 0 0 >> /etc/fstab
+  - systemctl daemon-reload
